@@ -10,21 +10,40 @@ public class Player : PhysicsObject
     private SpriteRenderer spriteRenderer;
     private Animator animator;
     private BoxCollider2D boxCollider;
+    private GameObject weapon;
+    private GameObject hand;
 
     private void Awake() {
         spriteRenderer = GetComponent<SpriteRenderer>();
         rigidbody = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         boxCollider = GetComponent<BoxCollider2D>();
+        hand = transform.GetChild(0).gameObject;
+    }
+
+    protected override void Collisions(RaycastHit2D collider) {
+        if (collider.collider.tag == "weapon") {
+            weapon = collider.collider.gameObject;
+            Projectile instance = weapon.GetComponent<Projectile>();
+            if (instance.isDangerous) {
+                Debug.Log("I'm dead, Jim.");
+                animator.SetBool("dead", true);
+            } else {
+                Debug.Log("got weapon: " + instance.data.WeaponName);
+                weapon.transform.SetParent(transform);
+                weapon.transform.position = hand.transform.position;
+                weapon.transform.rotation = Quaternion.Euler(0,0,-89.145f);
+            }
+        }
     }
 
     protected override void ComputeVelocity() {
         Vector2 move = Vector2.zero;
         move.x = Input.GetAxis("Horizontal");
 
-        if (Input.GetButtonDown("Jump") && grounded) {
+        if (Input.GetKeyDown(KeyCode.W) && grounded) {
             velocity.y = jumpTakeOffSpeed;
-        } else if (Input.GetButtonUp("Jump")) {
+        } else if (Input.GetKeyUp(KeyCode.W)) {
             if (velocity.y > 0) {
                 velocity.y = velocity.y * 0.5f;
             }
@@ -36,10 +55,13 @@ public class Player : PhysicsObject
 
         animator.SetBool("grounded", grounded);
 
-        bool flipSprite = (spriteRenderer.flipX ? (move.x > 0.01f) : (move.x < 0.01f));
+        bool flipSprite = (spriteRenderer.flipX ? (move.x > 0.01f) : (move.x < 0.0f));
         if (flipSprite) 
         {
             spriteRenderer.flipX = !spriteRenderer.flipX;
+            if (weapon) {
+                weapon.GetComponent<Projectile>().renderer.flipX = spriteRenderer.flipX;
+            }
         }
 
         if(Input.GetKeyDown(KeyCode.S)) {
@@ -50,5 +72,14 @@ public class Player : PhysicsObject
             boxCollider.size = new Vector2(0.32f, 0.32f);
         }
         targetVelocity = move * maxSpeed;
+    
+        if(Input.GetKeyDown(KeyCode.Space)) {
+            if (weapon) {
+                weapon.transform.parent = null;
+                weapon.GetComponent<Projectile>().start_moving = true;
+                weapon.GetComponent<Projectile>().direction = Vector2.left;
+                weapon.GetComponent<Projectile>().isDangerous = true;
+            }
+        }
     }
 }

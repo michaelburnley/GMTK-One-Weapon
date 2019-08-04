@@ -32,6 +32,10 @@ public class PhysicsObject : MonoBehaviour
 
     }
 
+    protected virtual void Collisions(RaycastHit2D collider) {
+
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -63,6 +67,8 @@ public class PhysicsObject : MonoBehaviour
             hitbufferList.Clear();
             for (int i = 0; i < count; i++) {
                 hitbufferList.Add(hitbuffer[i]);
+                Collisions(hitbuffer[i]);
+                Debug.Log(hitbuffer[i]);
             }
 
             for (int i = 0; i < hitbufferList.Count; i++) {

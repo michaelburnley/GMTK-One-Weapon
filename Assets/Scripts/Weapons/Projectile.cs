@@ -2,19 +2,36 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Projectile : MonoBehaviour
+public class Projectile : PhysicsObject
 {
     [SerializeField]
-    private WeaponData data;
-    // Start is called before the first frame update
-    void Start()
-    {
-    
+    public WeaponData data;
+    public SpriteRenderer renderer;
+    public float maxSpeed = 100f;
+    public bool start_moving = false;
+    public Vector2 direction;
+    public bool isDangerous = false;
+
+    private void Awake() {
+        renderer = GetComponent<SpriteRenderer>();
+        renderer.sprite = data.Icon;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+    protected override void Collisions(RaycastHit2D collider) {
+        if (collider.collider.tag == "wall" && start_moving) {
+            GameObject instantiated_projectile = Instantiate(this.gameObject, transform.position, Quaternion.identity);
+            instantiated_projectile.GetComponent<Projectile>().isDangerous = false;
+            instantiated_projectile.GetComponent<Projectile>().start_moving = false;
+            Destroy(this.gameObject);
+        }
     }
+
+    private void Update() {
+        if (start_moving) {
+            targetVelocity = Vector2.right * maxSpeed;
+            Debug.Log(targetVelocity);
+        }
+    }
+
+
 }
