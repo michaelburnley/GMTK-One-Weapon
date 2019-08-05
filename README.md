@@ -9,9 +9,9 @@ There's only one weapon in this fast-paced arena action game. Grab the weapon an
 
 ## Controls
 
-W - Jump
-A - Left
-S - Right
-D - Forward
+- W: Jump
+- A: Left
+- S: Right
+- D: Forward
 
-SPACE - Shoot (when you pick up the weapon)
+- SPACE: Shoot (when you pick up the weapon)

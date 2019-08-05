@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Player : PhysicsObject
 {
@@ -12,6 +13,10 @@ public class Player : PhysicsObject
     private BoxCollider2D boxCollider;
     private GameObject weapon;
     private GameObject hand;
+    public Text scoreField;
+    public int score = 0;
+    public string playerName;
+    public GameObject roundManager;
 
     private void Awake() {
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -19,6 +24,11 @@ public class Player : PhysicsObject
         animator = GetComponent<Animator>();
         boxCollider = GetComponent<BoxCollider2D>();
         hand = transform.GetChild(0).gameObject;
+    }
+
+    private void UpdateScore() {
+        score++;
+        roundManager.GetComponent<RoundManager>().UpdateScore(playerName);
     }
 
     protected override void Collisions(RaycastHit2D collider) {

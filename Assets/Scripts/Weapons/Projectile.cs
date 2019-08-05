@@ -19,9 +19,9 @@ public class Projectile : PhysicsObject
 
     protected override void Collisions(RaycastHit2D collider) {
         if (collider.collider.tag == "wall" && start_moving) {
+            start_moving = false;
+            isDangerous = false;
             GameObject instantiated_projectile = Instantiate(this.gameObject, transform.position, Quaternion.identity);
-            instantiated_projectile.GetComponent<Projectile>().isDangerous = false;
-            instantiated_projectile.GetComponent<Projectile>().start_moving = false;
             Destroy(this.gameObject);
         }
     }
